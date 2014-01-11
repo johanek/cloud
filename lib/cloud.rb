@@ -1,0 +1,5 @@
+require 'rubygems'
+require 'fog'
+require 'cloud/dns'
+require 'cloud/ec2'
+require 'cloud/version'

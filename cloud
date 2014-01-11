@@ -1,0 +1,89 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "lib"))
+require 'cloud'
+require 'gli'
+
+include GLI::App
+
+program_desc 'Manage cloud services'
+
+version Cloud::VERSION
+
+desc 'Manage EC2'
+command :ec2 do |c|
+
+  ec2 = Cloud::EC2.new
+
+  c.desc 'Describe instances'
+  c.command :describe do |describe|
+    describe.action do
+      require 'text-table'
+      puts ec2.describe.to_table(:first_row_is_head => true)
+    end # describe.action
+  end # command :describe
+
+  c.desc 'Create instance'
+  c.command :create do |create|
+    create.action do |global_options,options,args|
+      puts ec2.create(args) 
+    end # create.action
+  end # command :create
+
+  c.desc 'Start instance'
+  c.command :start do |start|
+    start.action do |global_options,options,args|
+      puts ec2.start(args[0])
+    end # start.action
+  end # command :start
+
+  c.desc 'Stop instance'
+  c.command :stop do |stop|
+    stop.action do |global_options,options,args|
+      puts ec2.stop(args[0])
+    end # stop.action
+  end # command :stop
+
+  c.desc 'Terminate instance'
+  c.command :terminate do |terminate|
+    terminate.action do |global_options,options,args|
+      puts ec2.terminate(args[0])
+    end # terminate.action
+  end # command :terminate
+
+  c.desc 'Set Public IP'
+  c.command :publicip do |publicip|
+    publicip.action do |global_options,options,args|
+      puts ec2.publicip(args[0],args[1])
+    end # publicip.action
+  end # command :publicip
+
+  c.default_command :describe
+
+end # command :ec2
+
+
+
+desc 'Manage DNS'
+command :dns do |c|
+
+  dns = Cloud::DNS.new
+
+  c.desc 'Add Host'
+  c.command :add do |add|
+    add.action do |global_options,options,args|
+      puts dns.add(args[0],args[1])
+    end # add.action
+  end # command :add
+
+  c.desc 'Delete Host'
+  c.command :delete do |delete|
+    delete.action do |global_options,options,args|
+      puts dns.del(args[0])
+    end # delete.action
+  end # command :del
+
+end # command :dns
+
+
+exit run(ARGV)
